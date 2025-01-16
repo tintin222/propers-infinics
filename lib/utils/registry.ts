@@ -1,8 +1,8 @@
-import { experimental_createProviderRegistry as createProviderRegistry } from 'ai'
-import { openai, createOpenAI } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { google } from '@ai-sdk/google'
 import { createAzure } from '@ai-sdk/azure'
+import { google } from '@ai-sdk/google'
+import { createOpenAI, openai } from '@ai-sdk/openai'
+import { experimental_createProviderRegistry as createProviderRegistry } from 'ai'
 import { createOllama } from 'ollama-ai-provider'
 
 export const registry = createProviderRegistry({
@@ -23,6 +23,10 @@ export const registry = createProviderRegistry({
   'openai-compatible': createOpenAI({
     apiKey: process.env.OPENAI_COMPATIBLE_API_KEY,
     baseURL: process.env.OPENAI_COMPATIBLE_API_BASE_URL
+  }),
+  openrouter: createOpenAI({
+    apiKey: process.env.OPENROUTER_API_KEY,
+    baseURL: process.env.OPENROUTER_API_BASE_URL
   })
 })
 
@@ -50,6 +54,8 @@ export function isProviderEnabled(providerId: string): boolean {
         !!process.env.OPENAI_COMPATIBLE_API_BASE_URL &&
         !!process.env.NEXT_PUBLIC_OPENAI_COMPATIBLE_MODEL
       )
+    case 'openrouter':
+      return !!process.env.OPENROUTER_API_KEY && !!process.env.OPENROUTER_API_BASE_URL
     default:
       return false
   }

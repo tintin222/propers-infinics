@@ -1,14 +1,14 @@
+import { searchSchema } from '@/lib/schema/search'
+import {
+    SearchResultImage,
+    SearchResultItem,
+    SearchResults,
+    SearXNGResponse,
+    SearXNGResult
+} from '@/lib/types'
+import { sanitizeUrl } from '@/lib/utils'
 import { tool } from 'ai'
 import Exa from 'exa-js'
-import { searchSchema } from '@/lib/schema/search'
-import { sanitizeUrl } from '@/lib/utils'
-import {
-  SearchResultImage,
-  SearchResults,
-  SearchResultItem,
-  SearXNGResponse,
-  SearXNGResult
-} from '@/lib/types'
 
 export const searchTool = tool({
   description: 'Search the web for information',
@@ -105,14 +105,15 @@ async function tavilySearch(
     },
     body: JSON.stringify({
       api_key: apiKey,
-      query,
-      max_results: Math.max(maxResults, 5),
-      search_depth: searchDepth,
+      query: `${query} company reviews features pros cons`,
+      max_results: Math.max(maxResults, 8),
+      search_depth: 'advanced',
       include_images: true,
       include_image_descriptions: includeImageDescriptions,
       include_answers: true,
       include_domains: includeDomains,
-      exclude_domains: excludeDomains
+      exclude_domains: excludeDomains,
+      search_quality: 'high'
     })
   })
 

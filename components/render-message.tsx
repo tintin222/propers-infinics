@@ -1,8 +1,9 @@
 import { Message } from 'ai'
-import { UserMessage } from './user-message'
-import { ToolSection } from './tool-section'
 import { AnswerSection } from './answer-section'
 import RelatedQuestions from './related-questions'
+import Suggestions from './suggestions'
+import { ToolSection } from './tool-section'
+import { UserMessage } from './user-message'
 
 interface RenderMessageProps {
   message: Message
@@ -23,6 +24,26 @@ export function RenderMessage({
 }: RenderMessageProps) {
   if (message.role === 'user') {
     return <UserMessage message={message.content} />
+  }
+
+  // Handle suggestions
+  const firstAnnotation = message.annotations?.[0]
+  if (
+    message.role === 'data' &&
+    firstAnnotation &&
+    typeof firstAnnotation === 'object' &&
+    'type' in firstAnnotation &&
+    firstAnnotation.type === 'suggestions' &&
+    'suggestions' in firstAnnotation
+  ) {
+    return (
+      <Suggestions
+        suggestions={firstAnnotation.suggestions as string[]}
+        onSuggestionSelect={onQuerySelect}
+        isOpen={getIsOpen(`${messageId}-suggestions`)}
+        onOpenChange={open => onOpenChange(`${messageId}-suggestions`, open)}
+      />
+    )
   }
 
   if (message.toolInvocations?.length) {

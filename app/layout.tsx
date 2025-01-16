@@ -1,67 +1,42 @@
-import Footer from '@/components/footer'
-import Header from '@/components/header'
-import { Sidebar } from '@/components/sidebar'
-import { ThemeProvider } from '@/components/theme-provider'
-import { Toaster } from '@/components/ui/sonner'
+import '@/app/globals.css'
+import { Analytics } from '@/components/analytics'
+import { Header } from '@/components/header'
+import { Providers } from '@/components/providers'
 import { cn } from '@/lib/utils'
-import type { Metadata, Viewport } from 'next'
-import { Inter as FontSans } from 'next/font/google'
-import './globals.css'
+import { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { Toaster } from 'sonner'
 
-const fontSans = FontSans({
-  subsets: ['latin'],
-  variable: '--font-sans'
-})
-
-const title = 'Morphic'
-const description =
-  'A fully open-source AI-powered answer engine with a generative UI.'
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://morphic.sh'),
-  title,
-  description,
-  openGraph: {
-    title,
-    description
+  title: {
+    default: 'Propers - Sales Proposition Generator',
+    template: '%s | Propers'
   },
-  twitter: {
-    title,
-    description,
-    card: 'summary_large_image',
-    creator: '@miiura'
+  description:
+    'Create unique and compelling sales propositions by analyzing your competitors and identifying key differentiators.',
+  icons: {
+    icon: '/favicon.ico'
   }
 }
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  minimumScale: 1,
-  maximumScale: 1
+interface RootLayoutProps {
+  children: React.ReactNode
 }
 
-export default function RootLayout({
-  children
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  const enableSaveChatHistory =
-    process.env.NEXT_PUBLIC_ENABLE_SAVE_CHAT_HISTORY === 'true'
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('font-sans antialiased', fontSans.variable)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          {children}
-          {enableSaveChatHistory && <Sidebar />}
-          <Footer />
-          <Toaster />
-        </ThemeProvider>
+      <body className={cn('min-h-screen font-sans antialiased', inter.className)}>
+        <Providers attribute="class" defaultTheme="system" enableSystem>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
+          </div>
+          <Toaster position="top-center" />
+          <Analytics />
+        </Providers>
       </body>
     </html>
   )

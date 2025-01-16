@@ -104,13 +104,12 @@ export function ChatPanel({
             tabIndex={0}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
-            placeholder="Ask a question..."
+            placeholder="What is your product?"
             spellCheck={false}
             value={input}
             className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             onChange={e => {
               handleInputChange(e)
-              setShowEmptyScreen(e.target.value.length === 0)
             }}
             onKeyDown={e => {
               // Enter should submit the form, but disable it right after IME input confirmation
@@ -147,8 +146,6 @@ export function ChatPanel({
               inputRef.current.style.borderRadius =
                 Math.max(8, newBorder) + 'px'
             }}
-            onFocus={() => setShowEmptyScreen(true)}
-            onBlur={() => setShowEmptyScreen(false)}
           />
           <Button
             type={isLoading ? 'button' : 'submit'}
@@ -171,7 +168,6 @@ export function ChatPanel({
                 target: { value: message }
               } as React.ChangeEvent<HTMLTextAreaElement>)
             }}
-            className={cn(showEmptyScreen ? 'visible' : 'invisible')}
           />
         )}
       </form>
