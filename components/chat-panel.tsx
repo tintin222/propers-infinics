@@ -70,9 +70,9 @@ export function ChatPanel({
   return (
     <div
       className={cn(
-        'mx-auto w-full',
+        'mx-auto w-full backdrop-blur-sm',
         messages.length > 0
-          ? 'fixed bottom-0 left-0 right-0 bg-background'
+          ? 'fixed bottom-0 left-0 right-0 bg-background/80 border-t shadow-lg'
           : 'fixed bottom-8 left-0 right-0 top-0 flex flex-col items-center justify-center'
       )}
     >
@@ -80,7 +80,7 @@ export function ChatPanel({
         onSubmit={handleSubmit}
         className={cn(
           'max-w-3xl w-full mx-auto',
-          messages.length > 0 ? 'px-0 py-4' : 'px-6'
+          messages.length > 0 ? 'px-4 py-4' : 'px-6'
         )}
       >
         <div className="relative flex items-center w-full gap-2">
@@ -89,10 +89,10 @@ export function ChatPanel({
               variant="ghost"
               size="icon"
               onClick={handleNewChat}
-              className="shrink-0 rounded-full group"
+              className="shrink-0 rounded-full group hover:bg-primary/10 transition-colors"
               type="button"
             >
-              <Plus className="size-4 group-hover:rotate-90 transition-all" />
+              <Plus className="size-4 group-hover:rotate-90 transition-all duration-200 ease-spring" />
             </Button>
           )}
           {messages.length === 0 && <ModelSelector />}
@@ -107,19 +107,17 @@ export function ChatPanel({
             placeholder="What is your product?"
             spellCheck={false}
             value={input}
-            className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="resize-none w-full min-h-12 rounded-full bg-muted/50 border-2 border-input/50 hover:border-input focus:border-primary pl-4 pr-12 pt-3 pb-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
             onChange={e => {
               handleInputChange(e)
             }}
             onKeyDown={e => {
-              // Enter should submit the form, but disable it right after IME input confirmation
               if (
                 e.key === 'Enter' &&
                 !e.shiftKey &&
-                !isComposing && // Not in composition
-                !enterDisabled // Not within the delay after confirmation
+                !isComposing &&
+                !enterDisabled
               ) {
-                // Prevent the default action to avoid adding a new line
                 if (input.trim().length === 0) {
                   e.preventDefault()
                   return
@@ -130,19 +128,11 @@ export function ChatPanel({
               }
             }}
             onHeightChange={height => {
-              // Ensure inputRef.current is defined
               if (!inputRef.current) return
-
-              // The initial height and left padding is 70px and 2rem
               const initialHeight = 70
-              // The initial border radius is 32px
               const initialBorder = 32
-              // The height is incremented by multiples of 20px
               const multiple = (height - initialHeight) / 20
-
-              // Decrease the border radius by 4px for each 20px height increase
               const newBorder = initialBorder - 4 * multiple
-              // The lowest border radius will be 8px
               inputRef.current.style.borderRadius =
                 Math.max(8, newBorder) + 'px'
             }}
@@ -152,13 +142,16 @@ export function ChatPanel({
             size={'icon'}
             variant={'ghost'}
             className={cn(
-              'absolute right-2 top-1/2 transform -translate-y-1/2',
+              'absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-primary/10 transition-colors',
               isLoading && 'animate-pulse'
             )}
             disabled={input.length === 0 && !isLoading}
             onClick={isLoading ? stop : undefined}
           >
-            {isLoading ? <Square size={20} /> : <ArrowUp size={20} />}
+            {isLoading ? 
+              <Square size={18} className="text-primary" /> : 
+              <ArrowUp size={18} className="text-primary" />
+            }
           </Button>
         </div>
         {messages.length === 0 && (
