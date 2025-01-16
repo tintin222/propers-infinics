@@ -1,23 +1,21 @@
-import '@/app/globals.css'
-import { Analytics } from '@/components/analytics'
-import { Header } from '@/components/header'
-import { Providers } from '@/components/providers'
-import { cn } from '@/lib/utils'
+import { ChatLayout } from '@/components/chat-layout'
+import { Toaster } from '@/components/ui/sonner'
+import { getChats } from '@/lib/actions/chat'
+import { Analytics } from '@vercel/analytics/react'
+import { GeistSans } from 'geist/font/sans'
 import { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { Toaster } from 'sonner'
+import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const meta = {
+  title: 'Propers - Sales Proposition Generator',
+  description: 'Create unique sales propositions for your products and services.'
+}
 
 export const metadata: Metadata = {
+  ...meta,
   title: {
-    default: 'Propers - Sales Proposition Generator',
-    template: '%s | Propers'
-  },
-  description:
-    'Create unique and compelling sales propositions by analyzing your competitors and identifying key differentiators.',
-  icons: {
-    icon: '/favicon.ico'
+    default: meta.title,
+    template: `%s - ${meta.title}`
   }
 }
 
@@ -25,18 +23,17 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const chats = await getChats('anonymous')
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen font-sans antialiased', inter.className)}>
-        <Providers attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
-          </div>
-          <Toaster position="top-center" />
-          <Analytics />
-        </Providers>
+    <html lang="en" className={GeistSans.className}>
+      <body>
+        <ChatLayout chats={chats}>
+          {children}
+        </ChatLayout>
+        <Toaster />
+        <Analytics />
       </body>
     </html>
   )
