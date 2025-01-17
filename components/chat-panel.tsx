@@ -37,8 +37,9 @@ export function ChatPanel({
   const router = useRouter()
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const isFirstRender = useRef(true)
-  const [isComposing, setIsComposing] = useState(false) // Composition state
-  const [enterDisabled, setEnterDisabled] = useState(false) // Disable Enter after composition ends
+  const hasInitialQuery = useRef(false)
+  const [isComposing, setIsComposing] = useState(false)
+  const [enterDisabled, setEnterDisabled] = useState(false)
 
   const handleCompositionStart = () => setIsComposing(true)
 
@@ -55,17 +56,17 @@ export function ChatPanel({
     router.push('/')
   }
 
-  // if query is not empty, submit the query
+  // Handle initial query
   useEffect(() => {
-    if (isFirstRender.current && query && query.trim().length > 0) {
+    if (isFirstRender.current && query && query.trim().length > 0 && !hasInitialQuery.current) {
+      hasInitialQuery.current = true
       append({
         role: 'user',
         content: query
       })
       isFirstRender.current = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+  }, [query, append])
 
   return (
     <div
@@ -79,7 +80,6 @@ export function ChatPanel({
       <form
         onSubmit={handleSubmit}
         className={cn(
-          'max-w-3xl w-full mx-auto',
           messages.length > 0 ? 'px-4 py-4' : 'px-6'
         )}
       >
@@ -154,7 +154,7 @@ export function ChatPanel({
             }
           </Button>
         </div>
-        {messages.length === 0 && (
+        {messages.length === 0 && !query && !hasInitialQuery.current && (
           <EmptyScreen
             submitMessage={message => {
               handleInputChange({
