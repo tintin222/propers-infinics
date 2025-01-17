@@ -1,9 +1,9 @@
 'use server'
 
+import { getRedisClient, RedisWrapper } from '@/lib/redis/config'
+import { type Chat } from '@/lib/types'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { type Chat } from '@/lib/types'
-import { getRedisClient, RedisWrapper } from '@/lib/redis/config'
 
 async function getRedis(): Promise<RedisWrapper> {
   return await getRedisClient()
@@ -157,4 +157,31 @@ export async function shareChat(id: string, userId: string = 'anonymous') {
   await redis.hmset(`chat:${id}`, payload)
 
   return payload
+}
+
+export async function deleteChat(
+  id: string,
+  userId: string = 'anonymous'
+): Promise<{ error?: string }> {
+  try {
+    const redis = await getRedis()
+    const userChatKey = getUserChatKey(userId)
+    const chatKey = `chat:${id}`
+
+    // Check if chat exists and belongs to user
+    const chat = await redis.hgetall(chatKey)
+    if (!chat) {
+      return { error: 'Chat not found' }
+    }
+
+    const pipeline = redis.pipeline()
+    pipeline.del(chatKey)
+    pipeline.zrem(userChatKey, chatKey)
+    await pipeline.exec()
+
+    revalidatePath('/')
+    return {}
+  } catch (error) {
+    return { error: 'Failed to delete chat' }
+  }
 }

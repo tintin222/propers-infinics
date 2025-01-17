@@ -1,14 +1,47 @@
 'use client'
 
+import { deleteProposition, getPropositions, saveProposition } from '@/lib/actions/propositions'
 import { Chat } from '@/lib/types'
-import { Book, ChevronDown, ChevronUp } from 'lucide-react'
-import { useState } from 'react'
+import { generateId } from 'ai'
+import { Book, ChevronDown, ChevronUp, Pencil, Plus, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from './ui/alert-dialog'
 import { Button } from './ui/button'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger
 } from './ui/collapsible'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from './ui/dialog'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from './ui/select'
+import { Textarea } from './ui/textarea'
 
 interface PropositionLibraryProps {
   chats: Chat[]
@@ -45,7 +78,6 @@ function findFinalProposition(messages: any[]) {
   }
 
   if (categoryIndex === -1) {
-    console.log('No category selection found')
     return null
   }
 
@@ -55,7 +87,6 @@ function findFinalProposition(messages: any[]) {
     const message = messages[i]
     if (message.role === 'assistant') {
       const content = getMessageContent(message.content)
-      console.log('Checking assistant message:', content)
       
       // Store the last assistant message we find
       if (!lastAssistantMessage && content && content.length > 0) {
@@ -67,7 +98,6 @@ function findFinalProposition(messages: any[]) {
           !content.includes('🔵') && // Not a question
           !content.includes('Features of the competitor') && // Not competitor analysis
           !content.includes('Based on the search results')) { // Not search analysis
-        console.log('Found proposition:', content)
         return content.trim()
       }
     }
@@ -75,11 +105,9 @@ function findFinalProposition(messages: any[]) {
 
   // If we didn't find a clear proposition, return the last assistant message
   if (lastAssistantMessage) {
-    console.log('Using last assistant message as proposition:', lastAssistantMessage)
     return lastAssistantMessage.trim()
   }
 
-  console.log('No proposition found')
   return null
 }
 
@@ -98,19 +126,43 @@ function getCategoryFromMessages(messages: any[]) {
           content.includes('Experience-Focused') ||
           content.includes('Process-Focused') ||
           content.includes('Results-Focused')) {
-        console.log('Found category:', content)
         const category = content.split('-Focused')[0].trim()
         return category + '-Focused'
       }
     }
   }
-  console.log('No category found')
   return 'Uncategorized'
 }
+
+const categories = [
+  'Feature-Focused',
+  'Benefit-Focused',
+  'Target Audience-Focused',
+  'Problem-Solving Focused',
+  'Quality-Focused',
+  'Price-Focused',
+  'Service-Focused',
+  'Experience-Focused',
+  'Process-Focused',
+  'Results-Focused'
+]
 
 export function PropositionLibrary({ chats }: PropositionLibraryProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingProposition, setEditingProposition] = useState<any>(null)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [savedPropositions, setSavedPropositions] = useState<any[]>([])
+
+  // Load saved propositions
+  useEffect(() => {
+    const loadPropositions = async () => {
+      const props = await getPropositions()
+      setSavedPropositions(props)
+    }
+    loadPropositions()
+  }, [isEditing, isDeleting]) // Reload when editing or deleting
 
   // Filter chats that have final propositions
   const propositionChats = chats.filter(chat => 
@@ -129,11 +181,67 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
         id: chat.id,
         title: chat.title,
         proposition,
-        path: chat.path
+        path: chat.path,
+        fromChat: true
       })
     }
     return acc
-  }, {} as Record<string, Array<{id: string; title: string; proposition: string; path: string}>>)
+  }, {} as Record<string, Array<any>>)
+
+  // Add saved propositions to the categories
+  savedPropositions.forEach(prop => {
+    if (!propositionsByCategory[prop.category]) {
+      propositionsByCategory[prop.category] = []
+    }
+    propositionsByCategory[prop.category].push({
+      id: prop.id,
+      title: prop.title,
+      proposition: prop.content,
+      path: prop.chatId ? `/search/${prop.chatId}` : undefined,
+      fromChat: false
+    })
+  })
+
+  const handleSave = async (formData: FormData) => {
+    const title = formData.get('title') as string
+    const content = formData.get('content') as string
+    const category = formData.get('category') as string
+    const id = editingProposition?.id || generateId()
+
+    const result = await saveProposition({
+      id,
+      title,
+      content,
+      category,
+      createdAt: new Date().toISOString(),
+      chatId: editingProposition?.chatId
+    })
+
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(editingProposition ? 'Proposition updated' : 'Proposition saved')
+      setIsEditing(false)
+      setEditingProposition(null)
+      // Reload propositions
+      const props = await getPropositions()
+      setSavedPropositions(props)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    setIsDeleting(id)
+    const result = await deleteProposition(id)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success('Proposition deleted')
+      // Reload propositions
+      const props = await getPropositions()
+      setSavedPropositions(props)
+    }
+    setIsDeleting(null)
+  }
 
   return (
     <div className="flex flex-col w-64 h-screen bg-gradient-to-b from-muted/20 to-muted/30 border-l">
@@ -155,6 +263,75 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="space-y-4 p-2">
+          <Dialog open={isEditing} onOpenChange={setIsEditing}>
+            <DialogTrigger asChild>
+              <Button 
+                className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-0 transition-colors mb-4" 
+                variant="outline"
+                onClick={() => {
+                  setEditingProposition(null)
+                  setIsEditing(true)
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Proposition
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <form action={handleSave}>
+                <DialogHeader>
+                  <DialogTitle>{editingProposition ? 'Edit' : 'Add'} Proposition</DialogTitle>
+                  <DialogDescription>
+                    {editingProposition ? 'Edit your sales proposition below.' : 'Add a new sales proposition to your library.'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      placeholder="Enter a title"
+                      defaultValue={editingProposition?.title}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="content">Content</Label>
+                    <Textarea
+                      id="content"
+                      name="content"
+                      placeholder="Enter your proposition"
+                      defaultValue={editingProposition?.proposition}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select name="category" defaultValue={editingProposition?.category || categories[0]}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category} value={category}>
+                            {category.replace('-Focused', '')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    {editingProposition ? 'Save Changes' : 'Add Proposition'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
           {Object.entries(propositionsByCategory).map(([category, propositions]) => (
             <div key={category} className="space-y-2">
               <div 
@@ -173,18 +350,79 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
               {selectedCategory === category && (
                 <div className="pl-6 space-y-3">
                   {propositions.map((prop) => (
-                    <a
-                      key={prop.id}
-                      href={prop.path}
-                      className="block text-sm hover:text-primary transition-colors"
-                    >
-                      <div className="font-medium mb-1 line-clamp-2 text-foreground/80 hover:text-foreground">
-                        {prop.title}
+                    <div key={prop.id} className="group relative">
+                      {prop.path ? (
+                        <a
+                          href={prop.path}
+                          className="block text-sm hover:text-primary transition-colors"
+                        >
+                          <div className="font-medium mb-1 line-clamp-2 text-foreground/80 hover:text-foreground">
+                            {prop.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground line-clamp-3">
+                            {prop.proposition}
+                          </div>
+                        </a>
+                      ) : (
+                        <div className="block text-sm">
+                          <div className="font-medium mb-1 line-clamp-2 text-foreground/80">
+                            {prop.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground line-clamp-3">
+                            {prop.proposition}
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setEditingProposition({
+                              id: prop.id,
+                              title: prop.title,
+                              proposition: prop.proposition,
+                              category,
+                              chatId: prop.path?.split('/').pop()
+                            })
+                            setIsEditing(true)
+                          }}
+                        >
+                          <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                            >
+                              <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete proposition</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this proposition? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(prop.id)}
+                                className="bg-destructive hover:bg-destructive/90"
+                                disabled={isDeleting === prop.id}
+                              >
+                                {isDeleting === prop.id ? 'Deleting...' : 'Delete'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
-                      <div className="text-xs text-muted-foreground line-clamp-3">
-                        {prop.proposition}
-                      </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
               )}
