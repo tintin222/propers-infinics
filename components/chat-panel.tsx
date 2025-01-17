@@ -65,7 +65,7 @@ export function ChatPanel({
   return (
     <div
       className={cn(
-        'mx-auto w-full backdrop-blur-sm',
+        'mx-auto w-full max-w-3xl backdrop-blur-sm',
         messages.length > 0
           ? 'fixed bottom-0 left-0 right-0 bg-background/80 border-t shadow-lg'
           : 'fixed bottom-8 left-0 right-0 flex flex-col items-center justify-center'
@@ -74,6 +74,7 @@ export function ChatPanel({
       <form
         onSubmit={handleSubmit}
         className={cn(
+          'max-w-3xl mx-auto w-full',
           messages.length > 0 ? 'px-4 py-4' : 'px-6'
         )}
       >
