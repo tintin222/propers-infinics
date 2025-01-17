@@ -14,7 +14,7 @@ import { cookies } from 'next/headers'
 
 export const maxDuration = 30
 
-const DEFAULT_MODEL = 'openai:gpt-4o'
+const DEFAULT_MODEL = 'openrouter:anthropic/claude-3-sonnet-20240229'
 
 export async function POST(req: Request) {
   try {
