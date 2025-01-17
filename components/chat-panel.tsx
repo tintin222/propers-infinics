@@ -99,7 +99,7 @@ export function ChatPanel({
             tabIndex={0}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
-            placeholder="Bir ürünün veya iş modelin var mı? Yoksa arıyor musun?"
+            placeholder="Merhaba ben Propers’ın “Benzersiz Teklif” tecrübesiyle eğitilmiş yapay zeka asistanınım. Bir ürünün veya iş modelin var mı? Yoksa arıyor musun?"
             spellCheck={false}
             value={input}
             className="resize-none w-full min-h-12 rounded-full bg-muted/50 border-2 border-input/50 hover:border-input focus:border-primary pl-4 pr-12 pt-3 pb-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
