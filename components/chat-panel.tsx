@@ -6,7 +6,6 @@ import { ArrowUp, Plus, Square } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import Textarea from 'react-textarea-autosize'
-import { ModelSelector } from './model-selector'
 import { Button } from './ui/button'
 
 interface ChatPanelProps {
@@ -79,18 +78,15 @@ export function ChatPanel({
         )}
       >
         <div className="relative flex items-center w-full gap-2">
-          {messages.length > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNewChat}
-              className="shrink-0 rounded-full group hover:bg-primary/10 transition-colors"
-              type="button"
-            >
-              <Plus className="size-4 group-hover:rotate-90 transition-all duration-200 ease-spring" />
-            </Button>
-          )}
-          {messages.length === 0 && <ModelSelector />}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNewChat}
+            className="shrink-0 rounded-full group hover:bg-primary/10 transition-colors"
+            type="button"
+          >
+            <Plus className="size-4 group-hover:rotate-90 transition-all duration-200 ease-spring" />
+          </Button>
           <Textarea
             ref={inputRef}
             name="input"
@@ -99,14 +95,14 @@ export function ChatPanel({
             tabIndex={0}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
-            placeholder="Merhaba ben Propers’ın “Benzersiz Teklif” tecrübesiyle eğitilmiş yapay zeka asistanınım. Bir ürünün veya iş modelin var mı? Yoksa arıyor musun?"
+            placeholder={messages.length > 0 
+              ? "Buraya yazınız..."
+              : "Merhaba ben Propers'in Benzersiz Teklif tecrubesiyle egitilmis yapay zeka asistaninim. Bir urunun veya is modelin var mi? Yoksa ariyor musun?"}
             spellCheck={false}
             value={input}
             className="resize-none w-full min-h-12 rounded-full bg-muted/50 border-2 border-input/50 hover:border-input focus:border-primary pl-4 pr-12 pt-3 pb-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
-            onChange={e => {
-              handleInputChange(e)
-            }}
-            onKeyDown={e => {
+            onChange={handleInputChange}
+            onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
               if (
                 e.key === 'Enter' &&
                 !e.shiftKey &&
@@ -122,7 +118,7 @@ export function ChatPanel({
                 textarea.form?.requestSubmit()
               }
             }}
-            onHeightChange={height => {
+            onHeightChange={(height: number) => {
               if (!inputRef.current) return
               const initialHeight = 70
               const initialBorder = 32
