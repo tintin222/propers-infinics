@@ -33,11 +33,8 @@ export function ChatPanel({
   stop,
   append
 }: ChatPanelProps) {
-  const [showEmptyScreen, setShowEmptyScreen] = useState(false)
   const router = useRouter()
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const isFirstRender = useRef(true)
-  const hasInitialQuery = useRef(false)
   const [isComposing, setIsComposing] = useState(false)
   const [enterDisabled, setEnterDisabled] = useState(false)
 
@@ -56,15 +53,13 @@ export function ChatPanel({
     router.push('/')
   }
 
-  // Handle initial query
+  // Handle initial query if present
   useEffect(() => {
-    if (isFirstRender.current && query && query.trim().length > 0 && !hasInitialQuery.current) {
-      hasInitialQuery.current = true
+    if (query && query.trim()) {
       append({
         role: 'user',
         content: query
       })
-      isFirstRender.current = false
     }
   }, [query, append])
 
@@ -154,7 +149,7 @@ export function ChatPanel({
             }
           </Button>
         </div>
-        {messages.length === 0 && !query && !hasInitialQuery.current && (
+        {messages.length === 0 && (
           <EmptyScreen
             submitMessage={message => {
               handleInputChange({
