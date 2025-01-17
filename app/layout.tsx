@@ -1,4 +1,5 @@
 import { ChatLayout } from '@/components/chat-layout'
+import Header from '@/components/header'
 import { Toaster } from '@/components/ui/sonner'
 import { getChats } from '@/lib/actions/chat'
 import { Analytics } from '@vercel/analytics/react'
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={GeistSans.className}>
       <body>
+        <Header />
         <ChatLayout chats={chats}>
           {children}
         </ChatLayout>

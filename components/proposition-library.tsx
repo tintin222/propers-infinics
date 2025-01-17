@@ -148,7 +148,7 @@ const categories = [
 ]
 
 export function PropositionLibrary({ chats }: PropositionLibraryProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editingProposition, setEditingProposition] = useState<any>(null)
@@ -162,7 +162,7 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
       setSavedPropositions(props)
     }
     loadPropositions()
-  }, [isEditing, isDeleting]) // Reload when editing or deleting
+  }, [isEditing, isDeleting])
 
   // Filter chats that have final propositions
   const propositionChats = chats.filter(chat => 
@@ -244,7 +244,7 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
   }
 
   return (
-    <div className="flex flex-col w-64 h-screen bg-gradient-to-b from-muted/20 to-muted/30 border-l">
+    <div className="flex flex-col w-64 h-screen bg-gradient-to-b from-background to-muted/20 border-l">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button

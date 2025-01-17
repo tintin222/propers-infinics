@@ -49,6 +49,7 @@ export function ChatHistory({ chats }: ChatHistoryProps) {
   return (
     <div className="flex flex-col w-64 h-screen bg-gradient-to-b from-background to-muted/20 border-r">
       <div className="p-4 border-b bg-background/50 backdrop-blur-sm">
+        <h2 className="text-lg font-medium mb-4">Konuşma Geçmişi</h2>
         <Link href="/">
           <Button 
             className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-0 transition-colors" 
