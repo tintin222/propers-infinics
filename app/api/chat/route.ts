@@ -5,16 +5,17 @@ import { ExtendedCoreMessage } from '@/lib/types'
 import { convertToExtendedCoreMessages } from '@/lib/utils'
 import { isProviderEnabled } from '@/lib/utils/registry'
 import {
-    convertToCoreMessages,
-    createDataStreamResponse,
-    JSONValue,
-    streamText
+  convertToCoreMessages,
+  createDataStreamResponse,
+  JSONValue,
+  streamText
 } from 'ai'
 import { cookies } from 'next/headers'
 
 export const maxDuration = 30
+const DEFAULT_MODEL = 'openai:gpt-4o-mini'
 
-const DEFAULT_MODEL = 'openrouter:anthropic/claude-3-sonnet-20240229'
+//const DEFAULT_MODEL = 'openrouter:anthropic/claude-3-sonnet-20240229'
 
 export async function POST(req: Request) {
   try {
