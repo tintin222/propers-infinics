@@ -70,12 +70,14 @@ export function RenderMessage({
         chatId={chatId}
       />
       {!message.toolInvocations && message.annotations && (
-        <RelatedQuestions
-          annotations={message.annotations}
-          onQuerySelect={onQuerySelect}
-          isOpen={getIsOpen(`${messageId}-related`)}
-          onOpenChange={open => onOpenChange(`${messageId}-related`, open)}
-        />
+        <div style={{ display: 'none' }}>
+          <RelatedQuestions
+            annotations={message.annotations}
+            onQuerySelect={onQuerySelect}
+            isOpen={getIsOpen(`${messageId}-related`)}
+            onOpenChange={open => onOpenChange(`${messageId}-related`, open)}
+          />
+        </div>
       )}
     </>
   )

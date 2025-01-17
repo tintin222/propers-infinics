@@ -5,10 +5,10 @@ import { ExtendedCoreMessage } from '@/lib/types'
 import { convertToExtendedCoreMessages } from '@/lib/utils'
 import { isProviderEnabled } from '@/lib/utils/registry'
 import {
-  convertToCoreMessages,
-  createDataStreamResponse,
-  JSONValue,
-  streamText
+    convertToCoreMessages,
+    createDataStreamResponse,
+    JSONValue,
+    streamText
 } from 'ai'
 import { cookies } from 'next/headers'
 
