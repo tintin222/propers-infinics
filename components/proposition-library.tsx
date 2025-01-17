@@ -7,39 +7,39 @@ import { Book, ChevronDown, ChevronUp, Pencil, Plus, Trash2 } from 'lucide-react
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
 } from './ui/alert-dialog'
 import { Button } from './ui/button'
 import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
 } from './ui/collapsible'
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from './ui/dialog'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from './ui/select'
 import { Textarea } from './ui/textarea'
 
@@ -254,7 +254,7 @@ export function PropositionLibrary({ chats }: PropositionLibraryProps) {
           >
             <div className="flex items-center">
               <Book className="mr-2 h-4 w-4 text-primary" />
-              <span className="font-semibold">Proposition Library</span>
+              <span className="font-semibold">Benzersiz Teklifler</span>
             </div>
             {isOpen ? 
               <ChevronUp className="h-4 w-4 text-muted-foreground" /> : 
