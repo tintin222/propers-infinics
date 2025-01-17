@@ -6,7 +6,6 @@ import { ArrowUp, Plus, Square } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import Textarea from 'react-textarea-autosize'
-import { EmptyScreen } from './empty-screen'
 import { ModelSelector } from './model-selector'
 import { Button } from './ui/button'
 
@@ -69,7 +68,7 @@ export function ChatPanel({
         'mx-auto w-full backdrop-blur-sm',
         messages.length > 0
           ? 'fixed bottom-0 left-0 right-0 bg-background/80 border-t shadow-lg'
-          : 'fixed bottom-8 left-0 right-0 top-0 flex flex-col items-center justify-center'
+          : 'fixed bottom-8 left-0 right-0 flex flex-col items-center justify-center'
       )}
     >
       <form
@@ -149,15 +148,6 @@ export function ChatPanel({
             }
           </Button>
         </div>
-        {messages.length === 0 && (
-          <EmptyScreen
-            submitMessage={message => {
-              handleInputChange({
-                target: { value: message }
-              } as React.ChangeEvent<HTMLTextAreaElement>)
-            }}
-          />
-        )}
       </form>
     </div>
   )
