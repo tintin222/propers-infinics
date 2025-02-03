@@ -9,7 +9,28 @@ import './globals.css'
 
 const meta = {
   title: 'Propers - Sales Proposition Generator',
-  description: 'Create unique sales propositions for your products and services.'
+  description: 'Create unique sales propositions for your products and services.',
+  metadataBase: new URL('https://propers.ai'),
+  openGraph: {
+    title: 'Propers - Sales Proposition Generator',
+    description: 'Create unique sales propositions for your products and services.',
+    type: 'website',
+    url: 'https://propers.ai',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Propers - Sales Proposition Generator'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Propers - Sales Proposition Generator',
+    description: 'Create unique sales propositions for your products and services.',
+    images: ['/og-image.png']
+  }
 }
 
 export const metadata: Metadata = {

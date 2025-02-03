@@ -10,8 +10,31 @@ export async function generateMetadata(props: {
 }) {
   const { id } = await props.params
   const chat = await getChat(id, 'anonymous')
+  const title = chat?.title.toString().slice(0, 50) || 'Propers - Sales Proposition Generator'
+  
   return {
-    title: chat?.title.toString().slice(0, 50) || 'Propers - Sales Proposition Generator'
+    title,
+    description: 'Create unique sales propositions for your products and services.',
+    openGraph: {
+      title,
+      description: 'Create unique sales propositions for your products and services.',
+      type: 'website',
+      url: `https://propers.ai/search/${id}`,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: title
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: 'Create unique sales propositions for your products and services.',
+      images: ['/og-image.png']
+    }
   }
 }
 
