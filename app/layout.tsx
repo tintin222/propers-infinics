@@ -8,12 +8,12 @@ import { Metadata } from 'next'
 import './globals.css'
 
 const meta = {
-  title: 'Propers - Sales Proposition Generator',
-  description: 'Create unique sales propositions for your products and services.',
+  title: 'Propers - Benzersiz Teklif Botu',
+  description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
   metadataBase: new URL('https://propers.ai'),
   openGraph: {
-    title: 'Propers - Sales Proposition Generator',
-    description: 'Create unique sales propositions for your products and services.',
+    title: 'Propers - Benzersiz Teklif Botu',
+    description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
     type: 'website',
     url: 'https://propers.ai',
     images: [
@@ -21,14 +21,14 @@ const meta = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Propers - Sales Proposition Generator'
+        alt: 'Propers - Benzersiz Teklif Botu'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Propers - Sales Proposition Generator',
-    description: 'Create unique sales propositions for your products and services.',
+    title: 'Propers - Benzersiz Teklif Botu',
+    description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
     images: ['/og-image.png']
   }
 }

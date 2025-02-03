@@ -10,14 +10,14 @@ export async function generateMetadata(props: {
 }) {
   const { id } = await props.params
   const chat = await getChat(id, 'anonymous')
-  const title = chat?.title.toString().slice(0, 50) || 'Propers - Sales Proposition Generator'
+  const title = chat?.title.toString().slice(0, 50) || 'Propers - Benzersiz Teklif Botu'
   
   return {
     title,
-    description: 'Create unique sales propositions for your products and services.',
+    description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
     openGraph: {
       title,
-      description: 'Create unique sales propositions for your products and services.',
+      description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
       type: 'website',
       url: `https://propers.ai/search/${id}`,
       images: [
@@ -32,7 +32,7 @@ export async function generateMetadata(props: {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: 'Create unique sales propositions for your products and services.',
+      description: 'Ürün ve hizmetleriniz için benzersiz satış teklifleri oluşturun.',
       images: ['/og-image.png']
     }
   }
